@@ -1875,7 +1875,7 @@
  * Disable all menus and only display the Status Screen, or
  * just remove some extraneous menu items to recover space.
  */
-#define NO_LCD_MENUS
+#//define NO_LCD_MENUS
 //#define SLIM_LCD_MENUS
 
 //
