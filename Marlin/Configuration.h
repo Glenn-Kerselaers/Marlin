@@ -71,7 +71,7 @@
 
 // Author info of this build printed to the host during boot and M115
 #define STRING_CONFIG_H_AUTHOR "Glenn Kerselaers" // Who made the changes.
-#define CUSTOM_VERSION_FILE Version.h // Path from the root directory (no quotes)
+//#define CUSTOM_VERSION_FILE Version.h // Path from the root directory (no quotes)
 
 /**
  * *** VENDORS PLEASE READ ***
@@ -121,7 +121,7 @@
  *
  * :[2400, 9600, 19200, 38400, 57600, 115200, 250000, 500000, 1000000]
  */
-#define BAUDRATE 115200
+#define BAUDRATE 250000
 
 // Enable the Bluetooth serial interface on AT90USB devices
 //#define BLUETOOTH
@@ -132,7 +132,7 @@
 #endif
 
 // Name displayed in the LCD "Ready" message and Info menu
-#define CUSTOM_MACHINE_NAME "CE-3 Pro - Fysetc Cheetah 1.1b"
+#define CUSTOM_MACHINE_NAME "E3P - CheetahV1.1b-TMC2209"
 
 // Printer's unique ID, used by some programs to differentiate between machines.
 // Choose your own or use a service like https://www.uuidgenerator.net/version4
@@ -466,7 +466,7 @@
 #define HEATER_5_MAXTEMP 275
 #define HEATER_6_MAXTEMP 275
 #define HEATER_7_MAXTEMP 275
-#define BED_MAXTEMP      150
+#define BED_MAXTEMP      125
 
 //===========================================================================
 //============================= PID Settings ================================
@@ -986,7 +986,7 @@
 
 // Most probes should stay away from the edges of the bed, but
 // with NOZZLE_AS_PROBE this can be negative for a wider probing area.
-#define PROBING_MARGIN 5
+#define PROBING_MARGIN 1
 
 // X and Y axis travel speed (mm/min) between probes
 #define XY_PROBE_SPEED (133*60)
@@ -1088,8 +1088,8 @@
 // Require minimum nozzle and/or bed temperature for probing
 //#define PREHEAT_BEFORE_PROBING
 #if ENABLED(PREHEAT_BEFORE_PROBING)
-  #define PROBING_NOZZLE_TEMP 0   // (°C) Only applies to E0 at this time
-  #define PROBING_BED_TEMP     60
+  #define PROBING_NOZZLE_TEMP 120   // (°C) Only applies to E0 at this time
+  #define PROBING_BED_TEMP     50
 #endif
 
 // For Inverting Stepper Enable Pins (Active Low) use 0, Non Inverting (Active High) use 1
@@ -1161,7 +1161,7 @@
 #define Z_MIN_POS 0
 #define X_MAX_POS 245
 #define Y_MAX_POS Y_BED_SIZE
-#define Z_MAX_POS 240
+#define Z_MAX_POS 240  + Z_MIN_POS
 
 /**
  * Software Endstops
@@ -1321,7 +1321,7 @@
  */
 #define PREHEAT_BEFORE_LEVELING
 #if ENABLED(PREHEAT_BEFORE_LEVELING)
-  //#define LEVELING_NOZZLE_TEMP 0   // (°C) Only applies to E0 at this time
+  #define LEVELING_NOZZLE_TEMP 120   // (°C) Only applies to E0 at this time
   #define LEVELING_BED_TEMP     60
 #endif
 
@@ -1466,7 +1466,7 @@
    *  |  1       2  |   | 1         4 |    | 1         2 |   | 2           |
    *  LF --------- RF   LF --------- RF    LF --------- RF   LF --------- RF
    */
-  #define LEVEL_CORNERS_LEVELING_ORDER { LF, RF, RB, LB }
+  #define LEVEL_CORNERS_LEVELING_ORDER { LF, RB, LB, RF }
 #endif
 
 /**
@@ -1705,7 +1705,7 @@
   #define NOZZLE_CLEAN_CIRCLE_MIDDLE NOZZLE_CLEAN_START_POINT
 
   // Move the nozzle to the initial position after cleaning
-  //#define NOZZLE_CLEAN_GOBACK
+ #define NOZZLE_CLEAN_GOBACK
 
   // For a purge/clean station that's always at the gantry height (thus no Z move)
   //#define NOZZLE_CLEAN_NO_Z
@@ -1842,7 +1842,7 @@
  * SD Card support is disabled by default. If your controller has an SD slot,
  * you must uncomment the following option or it won't work.
  */
-//#define SDSUPPORT
+#define SDSUPPORT
 
 /**
  * SD CARD: ENABLE CRC
