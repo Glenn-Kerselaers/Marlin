@@ -807,7 +807,7 @@
 #if ENABLED(ASSISTED_TRAMMING)
 
   // Define positions for probe points.
-  #define TRAMMING_POINT_XY { {  20, 20 }, { 180,  20 }, { 180, 180 }, { 20, 180 } }
+ #define TRAMMING_POINT_XY {{30,30},{205,30},{205,205},{30,205}}
 
   // Define position names for probe points.
   #define TRAMMING_POINT_NAME_1 "Front-Left"
@@ -820,7 +820,7 @@
 
   #define ASSISTED_TRAMMING_WIZARD    // Add a Tramming Wizard to the LCD menu
 
-  //#define ASSISTED_TRAMMING_WAIT_POSITION { X_CENTER, Y_CENTER, 30 } // Move the nozzle out of the way for adjustment
+  //#define ASSISTED_TRAMMING_WAIT_POSITION {156,112,30} // Move the nozzle out of the way for adjustment
 
   /**
    * Screw thread:
@@ -1095,7 +1095,7 @@
       #define PROBE_OFFSET_WIZARD_START_Z 0.0
 
       // Set a convenient position to do the calibration (probing point and nozzle/bed-distance)
-      #define PROBE_OFFSET_WIZARD_XY_POS { X_CENTER, Y_CENTER }
+      #define PROBE_OFFSET_WIZARD_XY_POS {118,118}
     #endif
   #endif
 
@@ -1731,12 +1731,12 @@
  * Override if the automatically selected points are inadequate.
  */
 #if EITHER(AUTO_BED_LEVELING_3POINT, AUTO_BED_LEVELING_UBL)
-  #define PROBE_PT_1_X 15
-  #define PROBE_PT_1_Y 180
-  #define PROBE_PT_2_X 15
-  #define PROBE_PT_2_Y 20
-  #define PROBE_PT_3_X 170
-  #define PROBE_PT_3_Y 20
+#define PROBE_PT_1_X 40
+#define PROBE_PT_1_Y 40
+#define PROBE_PT_2_X 195
+#define PROBE_PT_2_Y 40
+#define PROBE_PT_3_X 156
+#define PROBE_PT_3_Y 195
 #endif
 
 /**
@@ -1767,10 +1767,10 @@
 
 #if EITHER(MESH_BED_LEVELING, AUTO_BED_LEVELING_UBL)
   // Override the mesh area if the automatic (max) area is too large
-  #define MESH_MIN_X MESH_INSET
-  #define MESH_MIN_Y MESH_INSET
-  #define MESH_MAX_X X_BED_SIZE - (MESH_INSET) - 10
-  #define MESH_MAX_Y Y_BED_SIZE - (MESH_INSET)
+#define MESH_MIN_X 40
+#define MESH_MAX_X 195
+#define MESH_MIN_Y 40
+#define MESH_MAX_Y 195
 #endif
 
 #if BOTH(AUTO_BED_LEVELING_UBL, EEPROM_SETTINGS)
