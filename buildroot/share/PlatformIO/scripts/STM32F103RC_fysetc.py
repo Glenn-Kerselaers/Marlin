@@ -1,6 +1,3 @@
-#
-# STM32F103RC_fysetc.py
-#
 import os
 from os.path import join
 from os.path import expandvars

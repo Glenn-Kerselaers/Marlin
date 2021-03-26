@@ -1,7 +1,3 @@
-#
-# lerdge.py
-# Customizations for Lerdge build environments
-#
 import os,sys
 Import("env")
 

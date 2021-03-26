@@ -434,32 +434,33 @@ FORCE_INLINE void _draw_heater_status(const heater_id_t heater_id, const char *p
   uint8_t pic_hot_bits;
   #if HAS_HEATED_BED
     const bool isBed = heater_id < 0;
-    const celsius_t t1 = (isBed ? thermalManager.degBed() : thermalManager.degHotend(heater_id)),
-                    t2 = (isBed ? thermalManager.degTargetBed() : thermalManager.degTargetHotend(heater_id));
+    const float t1 = (isBed ? thermalManager.degBed() : thermalManager.degHotend(heater_id));
+    const float t2 = (isBed ? thermalManager.degTargetBed() : thermalManager.degTargetHotend(heater_id));
   #else
-    const celsius_t t1 = thermalManager.degHotend(heater_id), t2 = thermalManager.degTargetHotend(heater_id);
+    const float t1 = thermalManager.degHotend(heater_id);
+    const float t2 = thermalManager.degTargetHotend(heater_id);
   #endif
 
   #if HOTENDS < 2
     if (heater_id == H_E0) {
       lcd.setCursor(2, 5);  lcd.print(prefix); //HE
-      lcd.setCursor(1, 6);  lcd.print(i16tostr3rj(t1));
+      lcd.setCursor(1, 6);  lcd.print(i16tostr3rj(t1 + 0.5));
       lcd.setCursor(1, 7);
     }
     else {
       lcd.setCursor(6, 5);  lcd.print(prefix); //BED
-      lcd.setCursor(6, 6);  lcd.print(i16tostr3rj(t1));
+      lcd.setCursor(6, 6);  lcd.print(i16tostr3rj(t1 + 0.5));
       lcd.setCursor(6, 7);
     }
   #else
     if (heater_id > H_BED) {
-      lcd.setCursor(heater_id * 4, 5);  lcd.print(prefix); // HE1 or HE2 or HE3
-      lcd.setCursor(heater_id * 4, 6);  lcd.print(i16tostr3rj(t1));
+      lcd.setCursor(heater_id * 4, 5);  lcd.print(prefix); //HE1 or HE2 or HE3
+      lcd.setCursor(heater_id * 4, 6);  lcd.print(i16tostr3rj(t1 + 0.5));
       lcd.setCursor(heater_id * 4, 7);
     }
     else {
       lcd.setCursor(13, 5);  lcd.print(prefix); //BED
-      lcd.setCursor(13, 6);  lcd.print(i16tostr3rj(t1));
+      lcd.setCursor(13, 6);  lcd.print(i16tostr3rj(t1 + 0.5));
       lcd.setCursor(13, 7);
     }
   #endif // HOTENDS <= 1
@@ -474,7 +475,7 @@ FORCE_INLINE void _draw_heater_status(const heater_id_t heater_id, const char *p
     }
     else
   #endif // !HEATER_IDLE_HANDLER
-      lcd.print(i16tostr3rj(t2));
+      lcd.print(i16tostr3rj(t2 + 0.5));
 
   switch (heater_id) {
     case H_BED: pic_hot_bits = ICON_BED;   break;
@@ -760,7 +761,7 @@ void MarlinUI::draw_status_screen() {
     #endif
   #endif // HAS_HEATED_BED
 
-  #if HAS_FAN
+  #if FAN_COUNT > 0
     uint16_t spd = thermalManager.fan_speed[0];
 
     #if ENABLED(ADAPTIVE_FAN_SLOWING)
@@ -783,7 +784,7 @@ void MarlinUI::draw_status_screen() {
     else
       picBits &= ~ICON_FAN;
 
-  #endif // HAS_FAN
+  #endif // FAN_COUNT > 0
 
   //
   // Line 9, 10 - icons

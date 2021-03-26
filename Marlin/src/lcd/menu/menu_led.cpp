@@ -105,14 +105,12 @@
 #if ENABLED(CASE_LIGHT_MENU)
   #include "../../feature/caselight.h"
 
-  #define CASELIGHT_TOGGLE_ITEM() EDIT_ITEM(bool, MSG_CASE_LIGHT, (bool*)&caselight.on, caselight.update_enabled)
-
   #if CASELIGHT_USES_BRIGHTNESS
     void menu_case_light() {
       START_MENU();
       BACK_ITEM(MSG_CONFIGURATION);
       EDIT_ITEM(percent, MSG_CASE_LIGHT_BRIGHTNESS, &caselight.brightness, 0, 255, caselight.update_brightness, true);
-      CASELIGHT_TOGGLE_ITEM();
+      EDIT_ITEM(bool, MSG_CASE_LIGHT, (bool*)&caselight.on, caselight.update_enabled);
       END_MENU();
     }
   #endif
@@ -157,14 +155,13 @@ void menu_led() {
   // Set Case light on/off/brightness
   //
   #if ENABLED(CASE_LIGHT_MENU)
-    #if CASELIGHT_USES_BRIGHTNESS
-      if (caselight.has_brightness())
+    #if DISABLED(CASE_LIGHT_NO_BRIGHTNESS)
+      if (TERN1(CASE_LIGHT_USE_NEOPIXEL, PWM_PIN(CASE_LIGHT_PIN)))
         SUBMENU(MSG_CASE_LIGHT, menu_case_light);
       else
     #endif
-        CASELIGHT_TOGGLE_ITEM();
+        EDIT_ITEM(bool, MSG_CASE_LIGHT, (bool*)&caselight.on, caselight.update_enabled);
   #endif
-
   END_MENU();
 }
 

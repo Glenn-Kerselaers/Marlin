@@ -68,7 +68,7 @@ static void event_handler(lv_obj_t *obj, lv_event_t event) {
       #endif
       break;
     case ID_T_FILAMENT:
-      uiCfg.hotendTargetTempBak = thermalManager.degTargetHotend(uiCfg.extruderIndex);
+      uiCfg.desireSprayerTempBak = thermalManager.temp_hotend[uiCfg.curSprayerChoose].target;
       lv_draw_filament_change();
       break;
     case ID_T_MORE:

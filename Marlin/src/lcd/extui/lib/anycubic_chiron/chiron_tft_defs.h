@@ -109,7 +109,6 @@
 #define AC_cmnd_power_loss_recovery    PSTR("G28XYR5\nG28Z")           // Lift, home X and Y then home Z when in 'safe' position
 
 namespace Anycubic {
-
   enum heater_state_t : uint8_t {
     AC_heater_off,
     AC_heater_temp_set,
@@ -149,5 +148,4 @@ namespace Anycubic {
     AC_menu_change_to_file,
     AC_menu_change_to_command
   };
-
-} // Anycubic
+}

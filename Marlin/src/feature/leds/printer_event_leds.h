@@ -55,12 +55,7 @@ public:
     static void onBedHeating(const float &start, const float &current, const float &target);
   #endif
 
-  #if HAS_HEATED_CHAMBER
-    static inline LEDColor onChamberHeatingStart() { old_intensity = 127; return leds.get_color(); }
-    static void onChamberHeating(const float &start, const float &current, const float &target);
-  #endif
-
-  #if HAS_TEMP_HOTEND || HAS_HEATED_BED || HAS_HEATED_CHAMBER
+  #if HAS_TEMP_HOTEND || HAS_HEATED_BED
     static inline void onHeatingDone() { leds.set_white(); }
     static inline void onPidTuningDone(LEDColor c) { leds.set_color(c); }
   #endif

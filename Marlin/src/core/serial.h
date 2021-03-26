@@ -24,10 +24,6 @@
 #include "../inc/MarlinConfig.h"
 #include "serial_hook.h"
 
-#if HAS_MEATPACK
-  #include "../feature/meatpack.h"
-#endif
-
 // Commonly-used strings in serial output
 extern const char NUL_STR[], SP_P_STR[], SP_T_STR[],
                   X_STR[], Y_STR[], Z_STR[], E_STR[],
@@ -62,66 +58,28 @@ extern uint8_t marlin_debug_flags;
 //
 // Serial redirection
 //
-// Step 1: Find what's the first serial leaf
-#if BOTH(HAS_MULTI_SERIAL, SERIAL_CATCHALL)
-  #define _SERIAL_LEAF_1  MYSERIAL
-#else
-  #define _SERIAL_LEAF_1  MYSERIAL1
-#endif
-
-// Hook Meatpack if it's enabled on the first leaf
-#if ENABLED(MEATPACK_ON_SERIAL_PORT_1)
-  typedef MeatpackSerial<decltype(_SERIAL_LEAF_1)> SerialLeafT1;
-  extern SerialLeafT1 mpSerial1;
-  #define SERIAL_LEAF_1 mpSerial1
-#else
-  #define SERIAL_LEAF_1 _SERIAL_LEAF_1
-#endif
-
-// Step 2: For multiserial, handle the second serial port as well
+typedef int8_t serial_index_t;
+#define SERIAL_ALL 0x7F
 #if HAS_MULTI_SERIAL
-  #define _PORT_REDIRECT(n,p) REMEMBER(n,multiSerial.portMask,p)
-  #define _PORT_RESTORE(n,p)  RESTORE(n)
-  #define SERIAL_ASSERT(P)    if(multiSerial.portMask!=(P)){ debugger(); }
-  // If we have a catchall, use that directly
+  #define _PORT_REDIRECT(n,p)   REMEMBER(n,multiSerial.portMask,p)
+  #define SERIAL_ASSERT(P)      if(multiSerial.portMask!=(P)){ debugger(); }
   #ifdef SERIAL_CATCHALL
-    #define _SERIAL_LEAF_2 SERIAL_CATCHALL
+    typedef MultiSerial<decltype(MYSERIAL), decltype(SERIAL_CATCHALL), 0> SerialOutputT;
   #else
-    #if HAS_ETHERNET
-      // We need to create an instance here
-      typedef ConditionalSerial<decltype(MYSERIAL2)> SerialLeafT2;
-      extern SerialLeafT2 msSerial2;
-      #define _SERIAL_LEAF_2 msSerial2
-    #else
-      // Don't create a useless instance here, directly use the existing instance
-      #define _SERIAL_LEAF_2 MYSERIAL2
-    #endif
+    typedef MultiSerial<decltype(MYSERIAL0), TERN(HAS_ETHERNET, ConditionalSerial<decltype(MYSERIAL1)>, decltype(MYSERIAL1)), 0>      SerialOutputT;
   #endif
-
-  // Hook Meatpack if it's enabled on the second leaf
-  #if ENABLED(MEATPACK_ON_SERIAL_PORT_2)
-    typedef MeatpackSerial<decltype(_SERIAL_LEAF_2)> SerialLeafT2;
-    extern SerialLeafT2 mpSerial2;
-    #define SERIAL_LEAF_2 mpSerial2
-  #else
-    #define SERIAL_LEAF_2 _SERIAL_LEAF_2
-  #endif
-
-  typedef MultiSerial<decltype(SERIAL_LEAF_1), decltype(SERIAL_LEAF_2), 0> SerialOutputT;
-  extern SerialOutputT        multiSerial;
-  #define SERIAL_IMPL         multiSerial
+  extern SerialOutputT          multiSerial;
+  #define SERIAL_IMPL           multiSerial
 #else
-  #define _PORT_REDIRECT(n,p) NOOP
-  #define _PORT_RESTORE(n)    NOOP
-  #define SERIAL_ASSERT(P)    NOOP
-  #define SERIAL_IMPL         SERIAL_LEAF_1
+  #define _PORT_REDIRECT(n,p)   NOOP
+  #define SERIAL_ASSERT(P)      NOOP
+  #define SERIAL_IMPL           MYSERIAL0
 #endif
 
 #define SERIAL_OUT(WHAT, V...)  (void)SERIAL_IMPL.WHAT(V)
 
-#define PORT_REDIRECT(p)   _PORT_REDIRECT(1,p)
-#define PORT_RESTORE()     _PORT_RESTORE(1)
-#define SERIAL_PORTMASK(P) SerialMask::from(P)
+#define PORT_REDIRECT(p)        _PORT_REDIRECT(1,p)
+#define SERIAL_PORTMASK(P)      _BV(P)
 
 //
 // SERIAL_CHAR - Print one or more individual chars
@@ -334,7 +292,7 @@ void serialprintPGM(PGM_P str);
 #endif
 
 #define SERIAL_ECHOPGM_P(P)         (serialprintPGM(P))
-#define SERIAL_ECHOLNPGM_P(P)       do{ serialprintPGM(P); SERIAL_EOL(); }while(0)
+#define SERIAL_ECHOLNPGM_P(P)       (serialprintPGM(P "\n"))
 
 #define SERIAL_ECHOPGM(S)           (serialprintPGM(PSTR(S)))
 #define SERIAL_ECHOLNPGM(S)         (serialprintPGM(PSTR(S "\n")))

@@ -83,13 +83,14 @@ bool PersistentStore::access_finish() {
 static void debug_rw(const bool write, int &pos, const uint8_t *value, const size_t size, const FRESULT s, const size_t total=0) {
   PGM_P const rw_str = write ? PSTR("write") : PSTR("read");
   SERIAL_CHAR(' ');
-  SERIAL_ECHOPGM_P(rw_str);
+  serialprintPGM(rw_str);
   SERIAL_ECHOLNPAIR("_data(", pos, ",", value, ",", size, ", ...)");
   if (total) {
     SERIAL_ECHOPGM(" f_");
-    SERIAL_ECHOPGM_P(rw_str);
+    serialprintPGM(rw_str);
     SERIAL_ECHOPAIR("()=", s, "\n size=", size, "\n bytes_");
-    SERIAL_ECHOLNPAIR_P(write ? PSTR("written=") : PSTR("read="), total);
+    serialprintPGM(write ? PSTR("written=") : PSTR("read="));
+    SERIAL_ECHOLN(total);
   }
   else
     SERIAL_ECHOLNPAIR(" f_lseek()=", s);

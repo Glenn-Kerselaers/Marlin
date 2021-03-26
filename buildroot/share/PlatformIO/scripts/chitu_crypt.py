@@ -1,9 +1,8 @@
-#
-# chitu_crypt.py
-# Customizations for Chitu boards
-#
 Import("env")
-import os,random,struct,uuid
+import os
+import random
+import struct
+import uuid
 
 # Relocate firmware from 0x08000000 to 0x08008800
 env['CPPDEFINES'].remove(("VECT_TAB_ADDR", "0x8000000"))

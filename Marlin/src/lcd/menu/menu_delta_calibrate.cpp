@@ -119,9 +119,7 @@ void lcd_delta_settings() {
 }
 
 void menu_delta_calibrate() {
-  #if ENABLED(DELTA_CALIBRATION_MENU)
-    const bool all_homed = all_axes_homed();  // Acquire ahead of loop
-  #endif
+  TERN_(DELTA_CALIBRATION_MENU, const bool all_homed = all_axes_homed()); // Acquire ahead of loop
 
   START_MENU();
   BACK_ITEM(MSG_MAIN);

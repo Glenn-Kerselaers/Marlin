@@ -47,13 +47,13 @@ char *GCodeParser::command_ptr,
 char GCodeParser::command_letter;
 uint16_t GCodeParser::codenum;
 
-#if USE_GCODE_SUBCODES
+#if ENABLED(USE_GCODE_SUBCODES)
   uint8_t GCodeParser::subcode;
 #endif
 
 #if ENABLED(GCODE_MOTION_MODES)
   int16_t GCodeParser::motion_mode_codenum = -1;
-  #if USE_GCODE_SUBCODES
+  #if ENABLED(USE_GCODE_SUBCODES)
     uint8_t GCodeParser::motion_mode_subcode;
   #endif
 #endif
@@ -189,7 +189,7 @@ void GCodeParser::parse(char *p) {
       }
 
       // Allow for decimal point in command
-      #if USE_GCODE_SUBCODES
+      #if ENABLED(USE_GCODE_SUBCODES)
         if (*p == '.') {
           p++;
           while (NUMERIC(*p))

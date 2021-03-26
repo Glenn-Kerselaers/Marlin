@@ -29,22 +29,17 @@
   #include "../libs/heatshrink/heatshrink_decoder.h"
 #endif
 
-inline bool bs_serial_data_available(const serial_index_t index) {
+inline bool bs_serial_data_available(const uint8_t index) {
   return SERIAL_IMPL.available(index);
 }
 
-inline int bs_read_serial(const serial_index_t index) {
+inline int bs_read_serial(const uint8_t index) {
   return SERIAL_IMPL.read(index);
 }
 
 #if ENABLED(BINARY_STREAM_COMPRESSION)
   static heatshrink_decoder hsd;
-  #if BOTH(ARDUINO_ARCH_STM32F1, SDIO_SUPPORT)
-    // STM32 requires a word-aligned buffer for SD card transfers via DMA
-    static __attribute__((aligned(sizeof(size_t)))) uint8_t decode_buffer[512] = {};
-  #else
-    static uint8_t decode_buffer[512] = {};
-  #endif
+  static uint8_t decode_buffer[512] = {};
 #endif
 
 class SDFileTransferProtocol  {

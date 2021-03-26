@@ -1,6 +1,3 @@
-#
-# STM32F103RC_MEEB_3DP.py
-#
 try:
     import configparser
 except ImportError:

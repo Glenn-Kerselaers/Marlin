@@ -83,25 +83,25 @@ typedef int8_t pin_t;
 // Serial ports
 #ifdef USBCON
   #include "../../core/serial_hook.h"
-  typedef ForwardSerial1Class< decltype(Serial) > DefaultSerial1;
-  extern DefaultSerial1 MSerial0;
+  typedef ForwardSerial0Type< decltype(Serial) > DefaultSerial;
+  extern DefaultSerial MSerial;
   #ifdef BLUETOOTH
-    typedef ForwardSerial1Class< decltype(bluetoothSerial) > BTSerial;
+    typedef ForwardSerial0Type< decltype(bluetoothSerial) > BTSerial;
     extern BTSerial btSerial;
   #endif
 
-  #define MYSERIAL1 TERN(BLUETOOTH, btSerial, MSerial0)
+  #define MYSERIAL0 TERN(BLUETOOTH, btSerial, MSerial)
 #else
   #if !WITHIN(SERIAL_PORT, -1, 3)
     #error "SERIAL_PORT must be from -1 to 3. Please update your configuration."
   #endif
-  #define MYSERIAL1 customizedSerial1
+  #define MYSERIAL0 customizedSerial1
 
   #ifdef SERIAL_PORT_2
     #if !WITHIN(SERIAL_PORT_2, -1, 3)
       #error "SERIAL_PORT_2 must be from -1 to 3. Please update your configuration."
     #endif
-    #define MYSERIAL2 customizedSerial2
+    #define MYSERIAL1 customizedSerial2
   #endif
 #endif
 

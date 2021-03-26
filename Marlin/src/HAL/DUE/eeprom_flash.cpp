@@ -976,13 +976,14 @@ bool PersistentStore::access_start()  { ee_Init();  return true; }
 bool PersistentStore::access_finish() { ee_Flush(); return true; }
 
 bool PersistentStore::write_data(int &pos, const uint8_t *value, size_t size, uint16_t *crc) {
-  uint16_t written = 0;
   while (size--) {
     uint8_t * const p = (uint8_t * const)pos;
     uint8_t v = *value;
-    if (v != ee_Read(uint32_t(p))) { // EEPROM has only ~100,000 write cycles, so only write bytes that have changed!
+    // EEPROM has only ~100,000 write cycles,
+    // so only write bytes that have changed!
+    if (v != ee_Read(uint32_t(p))) {
       ee_Write(uint32_t(p), v);
-      if (++written & 0x7F) delay(2); else safe_delay(2); // Avoid triggering watchdog during long EEPROM writes
+      delay(2);
       if (ee_Read(uint32_t(p)) != v) {
         SERIAL_ECHO_MSG(STR_ERR_EEPROM_WRITE);
         return true;

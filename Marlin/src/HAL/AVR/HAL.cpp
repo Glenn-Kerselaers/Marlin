@@ -25,7 +25,7 @@
 #include "HAL.h"
 
 #ifdef USBCON
-  DefaultSerial1 MSerial0(false, Serial);
+  DefaultSerial MSerial(false, Serial);
   #ifdef BLUETOOTH
     BTSerial btSerial(false, bluetoothSerial);
   #endif

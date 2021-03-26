@@ -1,6 +1,3 @@
-#
-# STM32F103RC_SKR_MINI.py
-#
 import os
 Import("env")
 

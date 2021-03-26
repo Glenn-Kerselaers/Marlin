@@ -143,9 +143,7 @@
  */
 #if IS_SCARA
   #undef SLOWDOWN
-  #if DISABLED(AXEL_TPARA)
-    #define QUICK_HOME
-  #endif
+  #define QUICK_HOME
   #define SCARA_PRINTABLE_RADIUS (SCARA_LINKAGE_1 + SCARA_LINKAGE_2)
 #endif
 
@@ -399,7 +397,7 @@
  * Temp Sensor defines
  */
 
-#define ANY_TEMP_SENSOR_IS(n) (TEMP_SENSOR_0 == (n) || TEMP_SENSOR_1 == (n) || TEMP_SENSOR_2 == (n) || TEMP_SENSOR_3 == (n) || TEMP_SENSOR_4 == (n) || TEMP_SENSOR_5 == (n) || TEMP_SENSOR_6 == (n) || TEMP_SENSOR_7 == (n) || TEMP_SENSOR_BED == (n) || TEMP_SENSOR_PROBE == (n) || TEMP_SENSOR_CHAMBER == (n) || TEMP_SENSOR_COOLER == (n))
+#define ANY_TEMP_SENSOR_IS(n) (TEMP_SENSOR_0 == (n) || TEMP_SENSOR_1 == (n) || TEMP_SENSOR_2 == (n) || TEMP_SENSOR_3 == (n) || TEMP_SENSOR_4 == (n) || TEMP_SENSOR_5 == (n) || TEMP_SENSOR_6 == (n) || TEMP_SENSOR_7 == (n) || TEMP_SENSOR_BED == (n) || TEMP_SENSOR_PROBE == (n) || TEMP_SENSOR_CHAMBER == (n))
 
 #if ANY_TEMP_SENSOR_IS(1000)
   #define HAS_USER_THERMISTORS 1
@@ -490,90 +488,6 @@
 #endif
 #if TEMP_SENSOR_0_IS_MAX6675 || TEMP_SENSOR_1_IS_MAX6675
   #define HAS_MAX6675 1
-#endif
-
-//
-// Compatibility layer for MAX (SPI) temp boards
-//
-#if PIN_EXISTS(MAX6675_SS)
-  #if TEMP_SENSOR_0_IS_MAX31855
-    #define MAX31855_CS_PIN MAX6675_SS_PIN
-  #elif TEMP_SENSOR_0_IS_MAX31865
-    #define MAX31865_CS_PIN MAX6675_SS_PIN
-  #elif TEMP_SENSOR_0_IS_MAX6675
-    #define MAX6675_CS_PIN MAX6675_SS_PIN
-  #endif
-#endif
-
-#if PIN_EXISTS(MAX6675_SS2)
-  #if TEMP_SENSOR_1_IS_MAX31855
-    #define MAX31855_CS2_PIN MAX6675_SS2_PIN
-  #elif TEMP_SENSOR_1_IS_MAX31865
-    #define MAX31865_CS2_PIN MAX6675_SS2_PIN
-  #elif TEMP_SENSOR_1_IS_MAX6675
-    #define MAX6675_CS2_PIN MAX6675_SS2_PIN
-  #endif
-#endif
-
-#if PIN_EXISTS(MAX6675_DO)
-  #if HAS_MAX31855
-    #define MAX31855_MISO_PIN MAX6675_DO_PIN
-  #elif HAS_MAX31865
-    #define MAX31865_MISO_PIN MAX6675_DO_PIN
-  #elif HAS_MAX6675
-    #define MAX6675_MISO_PIN MAX6675_DO_PIN
-  #endif
-#endif
-
-#if PIN_EXISTS(MAX6675_SCK)
-  #if HAS_MAX31855
-    #define MAX31855_SCK_PIN MAX6675_SCK_PIN
-  #elif HAS_MAX31865
-    #define MAX31865_SCK_PIN MAX6675_SCK_PIN
-  #endif
-#endif
-
-// Compatibility Layer for use when HAL manipulates PINS for MAX31855 and MAX6675
-#if PIN_EXISTS(MAX31855_CS) && !PIN_EXISTS(MAX6675_SS)
-  #define MAX6675_SS_PIN MAX31855_CS_PIN
-#endif
-#if PIN_EXISTS(MAX31855_CS2) && !PIN_EXISTS(MAX6675_SS2)
-  #define MAX6675_SS2_PIN MAX31855_CS2_PIN
-#endif
-#if PIN_EXISTS(MAX6675_CS) && !PIN_EXISTS(MAX6675_SS)
-  #define MAX6675_SS_PIN MAX6675_CS_PIN
-#endif
-#if PIN_EXISTS(MAX6675_CS2) && !PIN_EXISTS(MAX6675_SS2)
-  #define MAX6675_SS2_PIN MAX6675_CS2_PIN
-#endif
-#if PIN_EXISTS(MAX31855_MISO) && !PIN_EXISTS(MAX6675_DO)
-  #define MAX6675_DO_PIN MAX31855_MISO_PIN
-#endif
-#if PIN_EXISTS(MAX6675_MISO) && !PIN_EXISTS(MAX6675_DO)
-  #define MAX6675_DO_PIN MAX6675_MISO_PIN
-#endif
-#if PIN_EXISTS(MAX31855_SCK) && !PIN_EXISTS(MAX6675_SCK)
-  #define MAX6675_SCK_PIN MAX31855_SCK_PIN
-#endif
-
-//
-// User-defined thermocouple libraries
-//
-// Add LIB_MAX6675 / LIB_MAX31855 / LIB_MAX31865 to the build_flags
-// to select a USER library for MAX6675, MAX31855, MAX31865
-//
-#if BOTH(HAS_MAX6675, LIB_MAX6675)
-  #define LIB_USR_MAX6675 1
-#endif
-#if BOTH(HAS_MAX31855, LIB_MAX31855)
-  #define LIB_USR_MAX31855 1
-#endif
-#if HAS_MAX31865
-  #if ENABLED(LIB_MAX31865)
-    #define LIB_USR_MAX31865 1
-  #else
-    #define LIB_ADAFRUIT_MAX31865 1
-  #endif
 #endif
 
 #if TEMP_SENSOR_2 == -4
@@ -742,27 +656,6 @@
 #else
   #undef CHAMBER_MINTEMP
   #undef CHAMBER_MAXTEMP
-#endif
-
-#if TEMP_SENSOR_COOLER == -4
-  #define COOLER_USES_AD8495 1
-#elif TEMP_SENSOR_COOLER == -3
-  #error "MAX31855 Thermocouples (-3) not supported for TEMP_SENSOR_COOLER."
-#elif TEMP_SENSOR_COOLER == -2
-  #error "MAX6675 Thermocouples (-2) not supported for TEMP_SENSOR_COOLER."
-#elif TEMP_SENSOR_COOLER == -1
-  #define COOLER_USES_AD595 1
-#elif TEMP_SENSOR_COOLER > 0
-  #define TEMP_SENSOR_COOLER_THERMISTOR_ID TEMP_SENSOR_COOLER
-  #define TEMP_SENSOR_COOLER_IS_THERMISTOR 1
-  #if TEMP_SENSOR_COOLER == 1000
-    #define COOLER_USER_THERMISTOR 1
-  #elif TEMP_SENSOR_COOLER == 998 || TEMP_SENSOR_COOLER == 999
-    #define COOLER_DUMMY_THERMISTOR 1
-  #endif
-#else
-  #undef COOLER_MINTEMP
-  #undef COOLER_MAXTEMP
 #endif
 
 #if TEMP_SENSOR_PROBE == -4
@@ -1839,106 +1732,6 @@
 #endif
 
 //
-// Set USING_HW_SERIALn flags for used Serial Ports
-//
-
-// Flag the indexed hardware serial ports in use
-#define CONF_SERIAL_IS(N) (  (defined(SERIAL_PORT)      && SERIAL_PORT == N) \
-                          || (defined(SERIAL_PORT_2)    && SERIAL_PORT_2 == N) \
-                          || (defined(MMU2_SERIAL_PORT) && MMU2_SERIAL_PORT == N) \
-                          || (defined(LCD_SERIAL_PORT)  && LCD_SERIAL_PORT == N) )
-
-// Flag the named hardware serial ports in use
-#define TMC_UART_IS(A,N) (defined(A##_HARDWARE_SERIAL) && (CAT(HW_,A##_HARDWARE_SERIAL) == HW_Serial##N || CAT(HW_,A##_HARDWARE_SERIAL) == HW_MSerial##N))
-#define ANY_SERIAL_IS(N) (  CONF_SERIAL_IS(N) \
-                         || TMC_UART_IS(X,  N) || TMC_UART_IS(Y , N) || TMC_UART_IS(Z , N) \
-                         || TMC_UART_IS(X2, N) || TMC_UART_IS(Y2, N) || TMC_UART_IS(Z2, N) || TMC_UART_IS(Z3, N) || TMC_UART_IS(Z4, N) \
-                         || TMC_UART_IS(E0, N) || TMC_UART_IS(E1, N) || TMC_UART_IS(E2, N) || TMC_UART_IS(E3, N) || TMC_UART_IS(E4, N) )
-
-#define HW_Serial    501
-#define HW_Serial0   502
-#define HW_Serial1   503
-#define HW_Serial2   504
-#define HW_Serial3   505
-#define HW_Serial4   506
-#define HW_Serial5   507
-#define HW_Serial6   508
-#define HW_MSerial0  509
-#define HW_MSerial1  510
-#define HW_MSerial2  511
-#define HW_MSerial3  512
-#define HW_MSerial4  513
-#define HW_MSerial5  514
-#define HW_MSerial6  515
-#define HW_MSerial7  516
-#define HW_MSerial8  517
-#define HW_MSerial9  518
-#define HW_MSerial10 519
-
-#if CONF_SERIAL_IS(-1)
-  #define USING_HW_SERIALUSB 1
-#endif
-#if ANY_SERIAL_IS(0)
-  #define USING_HW_SERIAL0 1
-#endif
-#if ANY_SERIAL_IS(1)
-  #define USING_HW_SERIAL1 1
-#endif
-#if ANY_SERIAL_IS(2)
-  #define USING_HW_SERIAL2 1
-#endif
-#if ANY_SERIAL_IS(3)
-  #define USING_HW_SERIAL3 1
-#endif
-#if ANY_SERIAL_IS(4)
-  #define USING_HW_SERIAL4 1
-#endif
-#if ANY_SERIAL_IS(5)
-  #define USING_HW_SERIAL5 1
-#endif
-#if ANY_SERIAL_IS(6)
-  #define USING_HW_SERIAL6 1
-#endif
-#if ANY_SERIAL_IS(7)
-  #define USING_HW_SERIAL7 1
-#endif
-#if ANY_SERIAL_IS(8)
-  #define USING_HW_SERIAL8 1
-#endif
-#if ANY_SERIAL_IS(9)
-  #define USING_HW_SERIAL9 1
-#endif
-#if ANY_SERIAL_IS(10)
-  #define USING_HW_SERIAL10 1
-#endif
-
-#undef HW_Serial
-#undef HW_Serial0
-#undef HW_Serial1
-#undef HW_Serial2
-#undef HW_Serial3
-#undef HW_Serial4
-#undef HW_Serial5
-#undef HW_Serial6
-#undef HW_MSerial0
-#undef HW_MSerial1
-#undef HW_MSerial2
-#undef HW_MSerial3
-#undef HW_MSerial4
-#undef HW_MSerial5
-#undef HW_MSerial6
-#undef HW_MSerial7
-#undef HW_MSerial8
-#undef HW_MSerial9
-#undef HW_MSerial10
-
-#undef _SERIAL_ID
-#undef _TMC_UART_IS
-#undef TMC_UART_IS
-#undef CONF_SERIAL_IS
-#undef ANY_SERIAL_IS
-
-//
 // Endstops and bed probe
 //
 
@@ -2049,9 +1842,6 @@
 #if HAS_ADC_TEST(CHAMBER)
   #define HAS_TEMP_ADC_CHAMBER 1
 #endif
-#if HAS_ADC_TEST(COOLER)
-  #define HAS_TEMP_ADC_COOLER 1
-#endif
 
 #define HAS_TEMP(N) ANY(HAS_TEMP_ADC_##N, TEMP_SENSOR_##N##_IS_MAX_TC, TEMP_SENSOR_##N##_IS_DUMMY)
 #if HAS_HOTEND && HAS_TEMP(0)
@@ -2065,9 +1855,6 @@
 #endif
 #if HAS_TEMP(CHAMBER)
   #define HAS_TEMP_CHAMBER 1
-#endif
-#if HAS_TEMP(COOLER)
-  #define HAS_TEMP_COOLER 1
 #endif
 
 #if ENABLED(JOYSTICK)
@@ -2121,39 +1908,26 @@
     #define BED_OVERSHOOT 10
   #endif
   #define BED_MAX_TARGET (BED_MAXTEMP - (BED_OVERSHOOT))
-#else
-  #undef PIDTEMPBED
 #endif
-
-#if HAS_TEMP_COOLER && PIN_EXISTS(COOLER)
-  #define HAS_COOLER 1
-  #ifndef COOLER_OVERSHOOT
-    #define COOLER_OVERSHOOT 2
-  #endif
-  #define COOLER_MIN_TARGET (COOLER_MINTEMP + (COOLER_OVERSHOOT))
-  #define COOLER_MAX_TARGET (COOLER_MAXTEMP - (COOLER_OVERSHOOT))
-#endif
-
 #if HAS_HEATED_BED || HAS_TEMP_CHAMBER
   #define BED_OR_CHAMBER 1
 #endif
-#if HAS_TEMP_HOTEND || BED_OR_CHAMBER || HAS_TEMP_PROBE || HAS_TEMP_COOLER
+#if HAS_TEMP_HOTEND || BED_OR_CHAMBER || HAS_TEMP_PROBE
   #define HAS_TEMP_SENSOR 1
 #endif
-
 #if HAS_TEMP_CHAMBER && PIN_EXISTS(HEATER_CHAMBER)
   #define HAS_HEATED_CHAMBER 1
-  #ifndef CHAMBER_OVERSHOOT
-    #define CHAMBER_OVERSHOOT 10
-  #endif
-  #define CHAMBER_MAX_TARGET (CHAMBER_MAXTEMP - (CHAMBER_OVERSHOOT))
-#else
-  #undef PIDTEMPCHAMBER
 #endif
 
 // PID heating
-#if ANY(PIDTEMP, PIDTEMPBED, PIDTEMPCHAMBER)
+#if !HAS_HEATED_BED
+  #undef PIDTEMPBED
+#endif
+#if EITHER(PIDTEMP, PIDTEMPBED)
   #define HAS_PID_HEATING 1
+#endif
+#if BOTH(PIDTEMP, PIDTEMPBED)
+  #define HAS_PID_FOR_BOTH 1
 #endif
 
 // Thermal protection
@@ -2169,13 +1943,9 @@
 #if BOTH(HAS_HEATED_CHAMBER, THERMAL_PROTECTION_CHAMBER) && WATCH_CHAMBER_TEMP_PERIOD > 0
   #define WATCH_CHAMBER 1
 #endif
-#if BOTH(HAS_COOLER, THERMAL_PROTECTION_COOLER) && WATCH_COOLER_TEMP_PERIOD > 0
-  #define WATCH_COOLER 1
-#endif
 #if  (ENABLED(THERMAL_PROTECTION_HOTENDS) || !EXTRUDERS) \
   && (ENABLED(THERMAL_PROTECTION_BED)     || !HAS_HEATED_BED) \
-  && (ENABLED(THERMAL_PROTECTION_CHAMBER) || !HAS_HEATED_CHAMBER) \
-  && (ENABLED(THERMAL_PROTECTION_COOLER) || !HAS_COOLER)
+  && (ENABLED(THERMAL_PROTECTION_CHAMBER) || !HAS_HEATED_CHAMBER)
   #define THERMALLY_SAFE 1
 #endif
 
@@ -2207,11 +1977,8 @@
 #if HAS_TEMP_CHAMBER && PIN_EXISTS(CHAMBER_AUTO_FAN)
   #define HAS_AUTO_CHAMBER_FAN 1
 #endif
-#if HAS_TEMP_COOLER && PIN_EXISTS(COOLER_AUTO_FAN)
-  #define HAS_AUTO_COOLER_FAN 1
-#endif
 
-#if ANY(HAS_AUTO_FAN_0, HAS_AUTO_FAN_1, HAS_AUTO_FAN_2, HAS_AUTO_FAN_3, HAS_AUTO_FAN_4, HAS_AUTO_FAN_5, HAS_AUTO_FAN_6, HAS_AUTO_FAN_7, HAS_AUTO_CHAMBER_FAN, HAS_AUTO_COOLER_FAN)
+#if ANY(HAS_AUTO_FAN_0, HAS_AUTO_FAN_1, HAS_AUTO_FAN_2, HAS_AUTO_FAN_3, HAS_AUTO_FAN_4, HAS_AUTO_FAN_5, HAS_AUTO_FAN_6, HAS_AUTO_FAN_7, HAS_AUTO_CHAMBER_FAN)
   #define HAS_AUTO_FAN 1
 #endif
 #define _FANOVERLAP(A,B) (A##_AUTO_FAN_PIN == E##B##_AUTO_FAN_PIN)
@@ -2495,9 +2262,6 @@
  * Heated chamber requires settings
  */
 #if HAS_HEATED_CHAMBER
-  #ifndef MIN_CHAMBER_POWER
-    #define MIN_CHAMBER_POWER 0
-  #endif
   #ifndef MAX_CHAMBER_POWER
     #define MAX_CHAMBER_POWER 255
   #endif
@@ -2507,20 +2271,7 @@
   #define WRITE_HEATER_CHAMBER(v) WRITE(HEATER_CHAMBER_PIN, (v) ^ HEATER_CHAMBER_INVERTING)
 #endif
 
-/**
- * Laser Cooling requires settings
- */
-#if HAS_COOLER
-  #ifndef MAX_COOLER_POWER
-    #define MAX_COOLER_POWER 255
-  #endif
-  #ifndef COOLER_INVERTING
-    #define COOLER_INVERTING true
-  #endif
-  #define WRITE_HEATER_COOLER(v) WRITE(COOLER_PIN, (v) ^ COOLER_INVERTING)
-#endif
-
-#if HAS_HOTEND || HAS_HEATED_BED || HAS_HEATED_CHAMBER || HAS_COOLER
+#if HAS_HOTEND || HAS_HEATED_BED || HAS_HEATED_CHAMBER
   #define HAS_TEMPERATURE 1
 #endif
 
@@ -2536,10 +2287,6 @@
   #elif defined(PREHEAT_1_LABEL)
     #define PREHEAT_COUNT 1
   #endif
-#endif
-
-#if !PREHEAT_COUNT
-  #undef PREHEAT_SHORTCUT_MENU_ITEM
 #endif
 
 /**
@@ -2637,8 +2384,8 @@
   #ifndef Z_PROBE_OFFSET_RANGE_MAX
     #define Z_PROBE_OFFSET_RANGE_MAX 20
   #endif
-  #ifndef XY_PROBE_FEEDRATE
-    #define XY_PROBE_FEEDRATE ((homing_feedrate_mm_m.x + homing_feedrate_mm_m.y) / 2)
+  #ifndef XY_PROBE_SPEED
+    #define XY_PROBE_SPEED ((homing_feedrate_mm_m.x + homing_feedrate_mm_m.y) / 2)
   #endif
   #ifndef NOZZLE_TO_PROBE_OFFSET
     #define NOZZLE_TO_PROBE_OFFSET { 0, 0, 0 }
@@ -2927,7 +2674,7 @@
 
 // Add commands that need sub-codes to this list
 #if ANY(G38_PROBE_TARGET, CNC_COORDINATE_SYSTEMS, POWER_LOSS_RECOVERY)
-  #define USE_GCODE_SUBCODES 1
+  #define USE_GCODE_SUBCODES
 #endif
 
 // Parking Extruder
@@ -3011,4 +2758,10 @@
 
 #if BUTTONS_EXIST(EN1, EN2, ENC)
   #define HAS_ROTARY_ENCODER 1
+#endif
+
+#if !NUM_SERIAL
+  #undef BAUD_RATE_GCODE
+#elif NUM_SERIAL > 1
+  #define HAS_MULTI_SERIAL 1
 #endif

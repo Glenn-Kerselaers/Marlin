@@ -1,6 +1,3 @@
-#
-# Generate a generic variant
-#
 import os,shutil
 from SCons.Script import DefaultEnvironment
 from platformio import util

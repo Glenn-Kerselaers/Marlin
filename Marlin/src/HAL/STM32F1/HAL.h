@@ -61,11 +61,11 @@
 #endif
 
 #ifdef SERIAL_USB
-  typedef ForwardSerial1Class< USBSerial > DefaultSerial1;
-  extern DefaultSerial1 MSerial0;
+  typedef ForwardSerial0Type< USBSerial > DefaultSerial;
+  extern DefaultSerial MSerial;
 
   #if !HAS_SD_HOST_DRIVE
-    #define UsbSerial MSerial0
+    #define UsbSerial MSerial
   #else
     #define UsbSerial MarlinCompositeSerial
   #endif
@@ -81,9 +81,9 @@
 #endif
 
 #if SERIAL_PORT == -1
-  #define MYSERIAL1 UsbSerial
+  #define MYSERIAL0 UsbSerial
 #elif WITHIN(SERIAL_PORT, 1, NUM_UARTS)
-  #define MYSERIAL1 MSERIAL(SERIAL_PORT)
+  #define MYSERIAL0 MSERIAL(SERIAL_PORT)
 #elif NUM_UARTS == 5
   #error "SERIAL_PORT must be -1 or from 1 to 5. Please update your configuration."
 #else
@@ -92,9 +92,9 @@
 
 #ifdef SERIAL_PORT_2
   #if SERIAL_PORT_2 == -1
-    #define MYSERIAL2 UsbSerial
+    #define MYSERIAL1 UsbSerial
   #elif WITHIN(SERIAL_PORT_2, 1, NUM_UARTS)
-    #define MYSERIAL2 MSERIAL(SERIAL_PORT_2)
+    #define MYSERIAL1 MSERIAL(SERIAL_PORT_2)
   #elif NUM_UARTS == 5
     #error "SERIAL_PORT_2 must be -1 or from 1 to 5. Please update your configuration."
   #else

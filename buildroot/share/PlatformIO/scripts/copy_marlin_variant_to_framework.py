@@ -1,6 +1,3 @@
-#
-# copy_marlin_variant_to_framework.py
-#
 import os,shutil
 from SCons.Script import DefaultEnvironment
 from platformio import util
